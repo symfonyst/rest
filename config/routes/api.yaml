@@ -1,0 +1,5 @@
+app.api.eo:
+    type:         rest
+    resource:     App\Controller\Api\NewsController
+    name_prefix:  api_ # Our precious parameter
+    prefix: api
