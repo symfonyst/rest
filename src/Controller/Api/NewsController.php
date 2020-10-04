@@ -14,6 +14,7 @@ use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Swagger\Annotations as SWG;
 
 /**
  * Class NewsController
@@ -22,6 +23,16 @@ use FOS\RestBundle\Controller\Annotations as Rest;
  */
 class NewsController extends AbstractFOSRestController
 {
+    /**
+     * Получение списка последних новостей
+     * @SWG\Tag (name="Новости")
+     * @SWG\Response (
+     *     response=200,
+     *     description="Получение списка последних новостей"
+     * )
+     * @param Request $request
+     * @return View
+     */
     public function getAllAction(Request $request){
         $currentDate = new \DateTime();
         $secondDate = clone $currentDate;
