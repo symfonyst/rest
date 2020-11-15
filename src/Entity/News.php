@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class News
 {
+    public function __construct()
+    {
+        $this->setDeleted(0);
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
