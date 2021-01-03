@@ -25,4 +25,13 @@ class PagesController extends AbstractController
 //        return new Response(var_dump($this->has('twig')));
         return $this->render("pages/main.html.twig", []);
     }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route ("/news", name="page_news")
+     */
+    public function newsAction(Request $request){
+        return $this->render("pages/news.html.twig", []);
+    }
 }

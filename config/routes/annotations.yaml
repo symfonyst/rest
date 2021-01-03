@@ -2,6 +2,14 @@ controllers:
     resource: ../../src/Controller/Frontend
     type: annotation
 
+backend_controller:
+    resource: ../../src/Controller/BackendController.php
+    type: annotation
+
+security_controller:
+    resource: ../../src/Controller/SecurityController.php
+    type: annotation
+
 kernel:
     resource: ../../src/Kernel.php
     type: annotation
