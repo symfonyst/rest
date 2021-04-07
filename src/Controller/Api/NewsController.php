@@ -9,8 +9,12 @@
 namespace App\Controller\Api;
 
 
+use App\Entity\News;
+use App\Form\NewsType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -51,5 +55,49 @@ class NewsController extends AbstractFOSRestController
             ],
         ];
         return View::create($data, Response::HTTP_OK);
+    }
+
+    public function postAction(Request $request){
+        try {
+            $entity = new News();
+            $form = $this->createForm(NewsType::class, $entity);
+            $form->submit($request->request->all());
+            if (
+                $form->isValid()
+            ) {
+                $this->removeExtraFields($request, $form);
+                $em = $this->get('doctrine')->getManager();
+                $em->persist($entity);
+                $em->flush();
+                return $this->getSuccessResponse($entity);
+            }
+            throw new \InvalidArgumentException('Error! Invalid form data.');
+        } catch (\Exception $exception) {
+            return $this->getFailResponse($exception);
+        }
+
+    }
+
+    public function getSuccessResponse($data){
+        return View::create([
+            'response'=>'success',
+            'data'=>$data,
+        ], Response::HTTP_OK);
+    }
+
+
+    public function getFailResponse(\Exception $exception){
+        return View::create([
+            'response' => 'fail',
+            'data' => $exception->getMessage(),
+        ], Response::HTTP_BAD_REQUEST);
+    }
+
+    protected function removeExtraFields(Request $request, Form $form)
+    {
+        $data     = $request->request->all();
+        $children = $form->all();
+        $data     = array_intersect_key($data, $children);
+        $request->request->replace($data);
     }
 }
