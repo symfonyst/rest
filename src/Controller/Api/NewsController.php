@@ -11,6 +11,7 @@ namespace App\Controller\Api;
 
 use App\Entity\News;
 use App\Form\NewsType;
+use Doctrine\ORM\EntityNotFoundException;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Symfony\Component\Form\Form;
@@ -37,7 +38,8 @@ class NewsController extends AbstractFOSRestController
      * @param Request $request
      * @return View
      */
-    public function getAllAction(Request $request){
+    public function getAllAction(Request $request)
+    {
         $currentDate = new \DateTime();
         $secondDate = clone $currentDate;
         $data = [
@@ -57,15 +59,16 @@ class NewsController extends AbstractFOSRestController
         return View::create($data, Response::HTTP_OK);
     }
 
-    public function postAction(Request $request){
+    public function postAction(Request $request)
+    {
         try {
             $entity = new News();
             $form = $this->createForm(NewsType::class, $entity);
+            $this->removeExtraFields($request, $form);
             $form->submit($request->request->all());
             if (
-                $form->isValid()
+            $form->isValid()
             ) {
-                $this->removeExtraFields($request, $form);
                 $em = $this->get('doctrine')->getManager();
                 $em->persist($entity);
                 $em->flush();
@@ -78,15 +81,45 @@ class NewsController extends AbstractFOSRestController
 
     }
 
-    public function getSuccessResponse($data){
+    public function putAction($id, Request $request)
+    {
+        return $this->patchAction($id, $request);
+    }
+
+    public function patchAction($id, Request $request)
+    {
+        try {
+            $em = $this->get('doctrine')->getManager();
+            $entity = $em->getRepository(News::class)->findOneBy([
+                'id' => $id,
+                'deleted' => 0
+            ]);
+            if (!$entity) throw new EntityNotFoundException('News not found');
+            $form = $this->createForm(NewsType::class, $entity);
+            $this->removeExtraFields($request, $form);
+            $form->submit($request->request->all());
+            if ($form->isValid()) {
+                $em->persist($entity);
+                $em->flush();
+                return $this->getSuccessResponse($entity);
+            }
+            throw new \InvalidArgumentException("Invalid form");
+        } catch (\Exception $exception) {
+            return $this->getFailResponse($exception);
+        }
+    }
+
+    public function getSuccessResponse($data)
+    {
         return View::create([
-            'response'=>'success',
-            'data'=>$data,
+            'response' => 'success',
+            'data' => $data,
         ], Response::HTTP_OK);
     }
 
 
-    public function getFailResponse(\Exception $exception){
+    public function getFailResponse(\Exception $exception)
+    {
         return View::create([
             'response' => 'fail',
             'data' => $exception->getMessage(),
@@ -95,9 +128,9 @@ class NewsController extends AbstractFOSRestController
 
     protected function removeExtraFields(Request $request, Form $form)
     {
-        $data     = $request->request->all();
+        $data = $request->request->all();
         $children = $form->all();
-        $data     = array_intersect_key($data, $children);
+        $data = array_intersect_key($data, $children);
         $request->request->replace($data);
     }
 }

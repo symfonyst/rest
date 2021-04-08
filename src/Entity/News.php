@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\AppBundleNewsRepository;
+use App\Repository\NewsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
