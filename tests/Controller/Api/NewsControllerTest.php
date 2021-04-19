@@ -38,7 +38,8 @@ class NewsControllerTest extends WebTestCase
         $res = json_decode($client->getResponse()->getContent());
         $this->assertTrue(isset($res->data->id));
         $id = $res->data->id;
-        $client->request("PUT", "/api/news/" . $id . ".json", [
+        $client->request("PATCH", "/api/news/" . $id . ".json", [
+            "active" => 1,
             "name" => "Начало учебного года 2021",
             "anons" => "1 сентября начался учебный год, поздравляем всех!",
             "content" => "С утра прошли праздничные линейки во всех школах. Фотоотчет на сайте.",
@@ -46,5 +47,7 @@ class NewsControllerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->getStatusCode() == Response::HTTP_OK);
         $res = json_decode($client->getResponse()->getContent());
         $this->assertEquals($res->data->name, "Начало учебного года 2021");
+        $client->request('DELETE', "/api/news/" . $id . ".json");
+        $this->assertTrue($client->getResponse()->getStatusCode() == Response::HTTP_OK);
     }
 }

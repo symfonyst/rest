@@ -109,6 +109,27 @@ class NewsController extends AbstractFOSRestController
         }
     }
 
+    public function deleteAction ($id, Request $request) {
+        try {
+            $em = $this->get('doctrine')->getManager();
+            /**
+             * @var News $entity
+             */
+            $entity = $em->getRepository(News::class)->findOneBy([
+                'id' => $id,
+                'deleted' => 0
+            ]);
+            if (!$entity) throw new EntityNotFoundException('News not found');
+            $entity->setDeleted(1);
+            $entity->setDeletedDate(new \DateTime());
+            $em->persist($entity);
+            $em->flush();
+            return $this->getSuccessResponse($entity);
+        } catch ( \Exception $exception) {
+            return $this->getFailResponse($exception);
+        }
+    }
+
     public function getSuccessResponse($data)
     {
         return View::create([
