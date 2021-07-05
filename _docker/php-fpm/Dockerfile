@@ -20,7 +20,7 @@ RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install gd
 
-RUN mkdir -p /var/www/symfonyst/web
+RUN mkdir -p /var/www/rest/web
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -28,4 +28,4 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN wget https://phar.phpunit.de/phpunit-6.0.phar && \
         chmod +x phpunit-6.0.phar && \
         mv phpunit-6.0.phar /usr/local/bin/phpunit
-WORKDIR "/var/www/symfonyst/web"
+WORKDIR "/var/www/rest/web"
