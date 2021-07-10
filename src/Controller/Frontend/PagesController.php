@@ -22,7 +22,6 @@ class PagesController extends AbstractController
      * @Route("/", name="page_main")
      */
     public function mainAction(Request $request){
-//        return new Response(var_dump($this->has('twig')));
         return $this->render("pages/main.html.twig", []);
     }
 
