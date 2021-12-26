@@ -64,7 +64,10 @@ class PagesController extends AbstractController
         curl_close($ch);
 
         $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
+
+        /** @var ResponseDto $data */
         $data = $serializer->deserialize($json, ResponseDto::class, 'json');
-        return new Response(print_r($data, true));
+
+        return $this->render('pages/weather.html.twig', ['data' => $data->main]);
     }
 }

@@ -1,0 +1,15 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Погода в Москве{% endblock %}
+
+{% block content %}
+    <div class="mt-4">
+    <h2>Погода в Москве на {{ 'now' | date('d.m.Y') }}</h2>
+    <p>
+        Температура от {{ data.temp_min }} до {{ data.temp_max }} <br>
+        Средняя температура {{ data.temp }} <br>
+        Ощущается как {{ data.feels_like }} <br>
+        Влажность {{ data.humidity }}
+    </p>
+    </div>
+{% endblock %}
